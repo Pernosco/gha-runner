@@ -28,6 +28,15 @@
 //!     ).await;
 //! });
 //! ```
+//!
+//! # Lower-level API
+//!
+//! * Fill out a `RunnerContext`
+//! * Call `Runner::new()` to create a `Runner`
+//! * Call `Runner::job_descriptions()` to get a list of `JobDescriptions` and pick a job
+//! * Call `Runner::job_runner()` to create a `JobRunner`
+//! * Call `JobRunner::container_images()` to get a list of Docker container images that will be needed, and create one container per image
+//! * Call `JobRunner::run_next_step()` repeatedly to run each job step, until `next_step_index() >= step_count()`
 
 use std::error::Error;
 use std::fmt;
@@ -248,10 +257,12 @@ pub trait RunnerBackend {
     /// Run a command in the context of the container, returning its exit code.
     /// There are no parameters, environment variables etc --- we emit script files
     /// into the shared filesystem that set those up.
+    /// `container` is an index into the `container_images()` array.
     /// `command` is the path to the command *inside the container*, starting with
     /// "/github".
-    /// stdout_filter is a callback that gets invoked for each chunk of data
-    /// emitted to the command's stdout. We use this to process workflow commands.
+    /// `stdout_filter` is a callback that gets invoked for each chunk of data
+    /// emitted to the command's stdout. (We use this to process
+    /// "[workflow commands](https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions)".)
     fn run<'a, F: FnMut(&[u8])>(
         &'a mut self,
         container: ContainerId,
@@ -399,7 +410,9 @@ fn create_public_writable_file(path: &Path) {
 }
 
 impl JobRunner {
-    /// Returns a list of container images that will be used, one per container instance.
+    /// The job requires a specific set of containers, one container per
+    /// entry in the returned list. Each container must use the given
+    /// `ContainerImage`.
     pub fn container_images(&self) -> &[ContainerImage] {
         &self.container_images
     }
