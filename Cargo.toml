@@ -2,7 +2,16 @@
 name = "gha-runner"
 version = "0.1.0"
 authors = ["Robert O'Callahan <roc@pernos.co>"]
+description = "Run Github Actions workflows locally or on a custom backend"
+documentation = "https://docs.rs/gha-runner"
+homepage = "https://pernos.co"
 edition = "2018"
+repository = "https://github.com/Pernosco/gha-runner"
+readme = "README.md"
+license = "MIT"
+keywords = ["github", "actions"]
+categories = ["development-tools", "development-tools::testing"]
+license-file = "LICENSE"
 
 [dependencies]
 backtrace = "0.3"

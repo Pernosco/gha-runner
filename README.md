@@ -8,7 +8,7 @@ cd gha-runner
 cargo build --examples
 target/debug/examples/gha_local --image-path ghcr.io/catthehacker/ubuntu:act Pernosco github-actions-test 6475d0f048a72996e3bd559cdd3763f53fe3d072 .github/workflows/build.yml "Build+test (stable, ubuntu-18.04)"
 ```
-The first time you run this it will download the 1GB docker image [`ghcr.io/catthehacker/ubuntu:js-18.04`](https://github.com/catthehacker/docker_images/blob/master/README.md); this may take a while on a slow connection.
+The first time you run this it will download the 1GB docker image [`ghcr.io/catthehacker/ubuntu:act-18.04`](https://github.com/catthehacker/docker_images/blob/master/README.md); this may take a while on a slow connection.
 
 ## Status
 
