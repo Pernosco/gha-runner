@@ -1,0 +1,30 @@
+name: gha-runner
+
+permissions:
+  contents: read
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    name: Build+test
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          persist-credentials: false
+
+      - name: Install stable toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: cargo build (debug+examples)
+        run: cargo build --examples
+
+      - name: cargo test (debug)
+        run: cargo test
+        env:
+          RUST_BACKTRACE: 1
