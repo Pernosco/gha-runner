@@ -1,0 +1,24 @@
+[package]
+name = "gha-runner"
+version = "0.1.0"
+authors = ["Robert O'Callahan <roc@pernos.co>"]
+edition = "2018"
+
+[dependencies]
+backtrace = "0.3"
+futures = "0.3"
+hex = "0.4"
+linked-hash-map = { version = "0.5", features = [ "serde_impl" ] }
+log = "0.4"
+octocrab = { git = "https://github.com/Pernosco/octocrab", branch = "events", default-features = false, features = ["rustls"] }
+reqwest = { version = "0.11", default-features = false, features = ["rustls-tls"] }
+serde = { version = "1", features = ["derive"] }
+serde_yaml = "0.8"
+tempfile = "3"
+tokio = { version = "1", features = ["process", "macros", "rt"] }
+url = "2"
+yaml-rust = "0.4"
+
+[dev-dependencies]
+env_logger = "0.9"
+structopt = "0.3"
