@@ -205,7 +205,7 @@ pub fn zero_access_token() -> &'static str {
     // This token is harmless. It has no rights to access anything and is owned
     // by the pernosco-unauthorized Github account which itself has no special
     // access to anything; it exists solely to own this token.
-    concat!("ghp_", "tJvAHeyOVUMtCxWeyrKCkeJfuWZvFc2z5lGo")
+    concat!("ghp_", "7EMsGDj8ZsOEJxDSXBoC9XsEjFgMWw2NvXQk")
 }
 
 /// Either fetches workflow data from the repository (if 'workflow' is a relative path)
