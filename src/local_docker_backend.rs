@@ -2,7 +2,7 @@ use std::io;
 
 use futures::future::*;
 use log::info;
-use octocrab::Octocrab;
+use octocrab::{params, Octocrab};
 use tokio::io::AsyncReadExt;
 
 use super::*;
@@ -222,14 +222,10 @@ pub async fn get_workflow(
         let data = fs::read(&workflow).unwrap();
         (data, format!(".github/workflows/{}", workflow))
     } else {
+        let commit: params::repos::Commitish = sha.to_string().into();
         let response = github
             .repos(owner, repo)
-            .raw_file(
-                &params::repos::LooseReference::KnownType(params::repos::Reference::Commit(
-                    sha.to_string(),
-                )),
-                workflow,
-            )
+            .raw_file(commit, workflow)
             .await
             .unwrap();
         let bytes = response.bytes().await.unwrap();

@@ -874,13 +874,12 @@ impl JobRunner {
         let action_path = format!(".gha-runner/step{}/action", self.step_index.0);
         let action_host_path = self.ctx.global_dir_host.join(&action_path);
         let _ = fs::create_dir(&action_host_path);
+        let commit: params::repos::Commitish = action_ref.to_string().into();
         let response = self
             .ctx
             .github
             .repos(action_repo_parts[0], action_repo_parts[1])
-            .download_tarball(&params::repos::LooseReference::UnknownType(
-                action_ref.to_string(),
-            ))
+            .download_tarball(commit)
             .await
             .map_err(|e| RunnerErrorKind::ActionDownloadError {
                 action: action.to_string(),
