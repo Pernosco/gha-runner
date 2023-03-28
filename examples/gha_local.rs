@@ -3,34 +3,35 @@ use std::io::{self, Write};
 use std::path::{Path, PathBuf};
 use std::process;
 
-use structopt::StructOpt;
+use clap::Parser;
 use tokio::runtime;
 
 use gha_runner::*;
 
-#[derive(StructOpt)]
+#[derive(Parser)]
+#[command(author, version, about)]
 /// Run a Gitub Actions workflow locally
-struct Opt {
+struct Cli {
     owner: String,
     repo: String,
     sha: String,
     /// Can be either an absolute path to a file containing the workflow or a path relative to the repo
     workflow: String,
     job_name: String,
-    #[structopt(
+    #[arg(
         long = "image-path",
         default_value = "ghcr.io/catthehacker/ubuntu:full"
     )]
     /// Path to image names
     image_path: String,
-    #[structopt(long = "strace")]
+    #[arg(long = "strace")]
     /// Run everything under strace and emit the results for the last executed step to the given file
     strace: Option<PathBuf>,
 }
 
 fn main() {
     env_logger::init();
-    let opt = Opt::from_args();
+    let cli = Cli::parse();
 
     let runtime = runtime::Builder::new_current_thread()
         .enable_all()
@@ -43,7 +44,7 @@ fn main() {
             stderr_handler: Box::new(|bytes| io::stderr().lock().write_all(bytes).unwrap()),
             ..Default::default()
         };
-        if let Some(output_path) = opt.strace {
+        if let Some(output_path) = cli.strace {
             options.container_setup_commands.push(
                 vec!["sudo", "apt", "update"]
                     .into_iter()
@@ -69,15 +70,15 @@ fn main() {
             });
         }
         let images = DockerImageMapping {
-            ubuntu_18_04: format!("{}-18.04", &opt.image_path).into(),
-            ubuntu_20_04: format!("{}-20.04", &opt.image_path).into(),
+            ubuntu_18_04: format!("{}-18.04", &cli.image_path).into(),
+            ubuntu_20_04: format!("{}-20.04", &cli.image_path).into(),
         };
         match run_workflow_with_local_backend(
-            &opt.owner,
-            &opt.repo,
-            &opt.sha,
-            &opt.workflow,
-            &opt.job_name,
+            &cli.owner,
+            &cli.repo,
+            &cli.sha,
+            &cli.workflow,
+            &cli.job_name,
             &images,
             options,
         )
