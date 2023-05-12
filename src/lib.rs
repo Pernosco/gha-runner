@@ -885,7 +885,7 @@ impl JobRunner {
                 action: action.to_string(),
                 inner: Box::new(e),
             })?;
-        untar_response(action, response, &action_host_path).await?;
+        untar_response(action, response.into(), &action_host_path).await?;
         Ok((action_host_path, action_path))
     }
 

@@ -223,11 +223,12 @@ pub async fn get_workflow(
         (data, format!(".github/workflows/{}", workflow))
     } else {
         let commit: params::repos::Commitish = sha.to_string().into();
-        let response = github
+        let response: reqwest::Response = github
             .repos(owner, repo)
             .raw_file(commit, workflow)
             .await
-            .unwrap();
+            .unwrap()
+            .into();
         let bytes = response.bytes().await.unwrap();
         info!("Fetched {}, {} bytes", workflow, bytes.len());
         (bytes.to_vec(), workflow.to_string())
