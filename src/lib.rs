@@ -165,6 +165,7 @@ impl RunnerContext {
 }
 
 /// A description of a job in a workflow.
+#[derive(Debug)]
 pub struct JobDescription {
     name: String,
     matrix_values: LinkedHashMap<String, Value>,

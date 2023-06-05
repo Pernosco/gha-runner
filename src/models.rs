@@ -19,7 +19,7 @@ pub struct Matrix(pub Value);
 /// The Value has already been expanded.
 pub struct Job(pub Value);
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 /// The Value has already been expanded.
 pub struct Step(pub Value);
 
