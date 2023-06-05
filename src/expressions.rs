@@ -162,14 +162,17 @@ pub fn expand(resolver: &dyn ContextResolver, value: Value) -> Result<Value, Run
                 return Ok(value);
             }
             // OK, we're doing string interpolation
-            if let Value::String(s) = value {
-                ret.push_str(&s);
-            } else {
-                return Err(RunnerErrorKind::ExpressionNonString {
-                    expression: rest[..len].to_string(),
-                    value: value,
+            match value {
+                Value::String(ref s) => ret.push_str(s),
+                Value::Bool(true) => ret.push_str("true"),
+                Value::Bool(false) => ret.push_str("false"),
+                _ => {
+                    return Err(RunnerErrorKind::ExpressionNonString {
+                        expression: rest[..len].to_string(),
+                        value: value,
+                    }
+                               .into());
                 }
-                .into());
             }
         } else {
             break;
