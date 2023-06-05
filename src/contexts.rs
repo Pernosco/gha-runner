@@ -22,6 +22,8 @@ impl<'a> ContextResolver<'a> for GithubContext<'a> {
             // Return an empty string for github.token, for now. We should try
             // to extract a fresh app installation token from `github` Octocrab.
             "token" => Some(self.ctx.token.clone().into()),
+            // Return something for github.event_name.
+            "event_name" => Some("pernosco".to_string().into()),
             _ => None,
         }
     }
