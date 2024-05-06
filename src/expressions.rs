@@ -171,7 +171,7 @@ pub fn expand(resolver: &dyn ContextResolver, value: Value) -> Result<Value, Run
                         expression: rest[..len].to_string(),
                         value: value,
                     }
-                               .into());
+                    .into());
                 }
             }
         } else {

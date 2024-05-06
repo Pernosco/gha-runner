@@ -50,6 +50,12 @@ use std::process::{Command, Stdio};
 use std::str;
 
 use backtrace::Backtrace;
+use bytes::Buf;
+use futures::pin_mut;
+use futures::prelude::*;
+use http::Response;
+use http_body::Body;
+use http_body_util::BodyStream;
 use linked_hash_map::LinkedHashMap;
 use log::{debug, info, warn};
 use octocrab::models::JobId;
@@ -272,11 +278,16 @@ pub trait RunnerBackend {
     ) -> Pin<Box<dyn Future<Output = i32> + 'a>>;
 }
 
-async fn untar_response(
+async fn untar_response<B: Body>(
     action: &str,
-    mut response: reqwest::Response,
+    response: Response<B>,
     dir: &Path,
-) -> Result<(), RunnerErrorKind> {
+) -> Result<(), RunnerErrorKind>
+where
+    B::Error: std::error::Error + Send + Sync + 'static,
+{
+    let response = BodyStream::new(response.into_body());
+    pin_mut!(response);
     let mut command = Command::new("tar");
     // Github's tarball contains a toplevel directory (e.g. 'actions-checkout-f1d3225')
     // so we strip that off.
@@ -287,19 +298,27 @@ async fn untar_response(
     let mut child = command.spawn().expect("Can't find 'tar'");
     while let Some(b) =
         response
-            .chunk()
+            .next()
             .await
+            .transpose()
             .map_err(|e| RunnerErrorKind::ActionDownloadError {
                 action: action.to_string(),
                 inner: Box::new(e),
             })?
     {
-        child.stdin.as_mut().unwrap().write_all(&b).map_err(|e| {
-            RunnerErrorKind::ActionDownloadError {
+        let b = match b.into_data() {
+            Ok(b) => b,
+            Err(_) => continue,
+        };
+        child
+            .stdin
+            .as_mut()
+            .unwrap()
+            .write_all(b.chunk())
+            .map_err(|e| RunnerErrorKind::ActionDownloadError {
                 action: action.to_string(),
                 inner: Box::new(e),
-            }
-        })?;
+            })?;
     }
     // Close stdin so tar terminates
     child.stdin = None;
@@ -886,7 +905,7 @@ impl JobRunner {
                 action: action.to_string(),
                 inner: Box::new(e),
             })?;
-        untar_response(action, response.into(), &action_host_path).await?;
+        untar_response(action, response, &action_host_path).await?;
         Ok((action_host_path, action_path))
     }
 

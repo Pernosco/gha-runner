@@ -1,6 +1,7 @@
 use std::io;
 
 use futures::future::*;
+use http_body_util::BodyExt;
 use log::info;
 use octocrab::{params, Octocrab};
 use tokio::io::AsyncReadExt;
@@ -223,13 +224,13 @@ pub async fn get_workflow(
         (data, format!(".github/workflows/{}", workflow))
     } else {
         let commit: params::repos::Commitish = sha.to_string().into();
-        let response: reqwest::Response = github
+        let response = github
             .repos(owner, repo)
             .raw_file(commit, workflow)
             .await
             .unwrap()
-            .into();
-        let bytes = response.bytes().await.unwrap();
+            .into_body();
+        let bytes = response.collect().await.unwrap().to_bytes();
         info!("Fetched {}, {} bytes", workflow, bytes.len());
         (bytes.to_vec(), workflow.to_string())
     }
