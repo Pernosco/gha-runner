@@ -22,7 +22,7 @@ http-body = "1"
 http-body-util = "0.1"
 linked-hash-map = { version = "0.5", features = [ "serde_impl" ] }
 log = "0.4"
-octocrab = { version = "0.38", default-features = false, features = ["default-client", "rustls", "rustls-webpki-tokio"] }
+octocrab = { version = "0.40", default-features = false, features = ["default-client", "rustls", "rustls-webpki-tokio"] }
 serde = { version = "1", features = ["derive"] }
 serde_yaml = "0.9"
 tempfile = "3"
