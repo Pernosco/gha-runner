@@ -11,6 +11,7 @@
 //! let images: DockerImageMapping = DockerImageMapping {
 //!     ubuntu_18_04: "ghcr.io/catthehacker/ubuntu:act-18.04".into(),
 //!     ubuntu_20_04: "ghcr.io/catthehacker/ubuntu:act-20.04".into(),
+//!     ubuntu_22_04: "ghcr.io/catthehacker/ubuntu:act-22.04".into(),
 //! };
 //! let runtime = tokio::runtime::Builder::new_current_thread()
 //!     .enable_all()
@@ -186,6 +187,8 @@ pub struct DockerImageMapping {
     pub ubuntu_18_04: ContainerImage,
     /// Full docker image name for ubuntu-20.04
     pub ubuntu_20_04: ContainerImage,
+    /// Full docker image name for ubuntu-22.04
+    pub ubuntu_22_04: ContainerImage,
 }
 
 impl JobDescription {
@@ -204,7 +207,8 @@ impl JobDescription {
         }
         let img = match self.runs_on[0].as_str() {
             // XXX what to do about self-hosted runners?
-            "ubuntu-latest" | "ubuntu-20.04" => &image_mapping.ubuntu_20_04,
+            "ubuntu-latest" | "ubuntu-22.04" => &image_mapping.ubuntu_22_04,
+            "ubuntu-20.04" => &image_mapping.ubuntu_20_04,
             "ubuntu-18.04" => &image_mapping.ubuntu_18_04,
             _ => return None,
         };
