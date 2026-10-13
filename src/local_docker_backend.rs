@@ -126,7 +126,7 @@ impl LocalDockerBackend {
         stderr_handler: OutputHandler,
     ) -> io::Result<LocalDockerBackend> {
         let bind_arg = format!(
-            "type=bind,src={},dst=/github",
+            "{}:/github:z",
             github_dir.to_str().expect("Tempdir has non-UTF8 path?")
         );
         // Do this synchronously. Running 'docker run' commands async
@@ -145,7 +145,7 @@ impl LocalDockerBackend {
                 "--init",
                 "--cap-add",
                 "LINUX_IMMUTABLE",
-                "--mount",
+                "-v",
                 &bind_arg,
                 // Make the container sleep so we can spawn jobs into it
                 "--entrypoint",
