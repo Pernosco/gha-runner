@@ -13,6 +13,7 @@ fn basic() {
     let images: DockerImageMapping = DockerImageMapping {
         ubuntu_18_04: "ghcr.io/catthehacker/ubuntu:act-18.04".into(),
         ubuntu_20_04: "ghcr.io/catthehacker/ubuntu:act-20.04".into(),
+        ubuntu_22_04: "ghcr.io/catthehacker/ubuntu:act-22.04".into(),
     };
 
     let runtime = runtime::Builder::new_current_thread()

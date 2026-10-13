@@ -72,6 +72,7 @@ fn main() {
         let images = DockerImageMapping {
             ubuntu_18_04: format!("{}-18.04", &cli.image_path).into(),
             ubuntu_20_04: format!("{}-20.04", &cli.image_path).into(),
+            ubuntu_22_04: format!("{}-22.04", &cli.image_path).into(),
         };
         match run_workflow_with_local_backend(
             &cli.owner,
