@@ -1,4 +1,4 @@
-use serde_yaml::Value;
+use crate::yaml::Value;
 
 use super::*;
 
@@ -59,7 +59,7 @@ fn get_context_value<'a>(
     for c in components {
         match resolver_value {
             ResolverValue::Yaml(yaml) => {
-                if let Some(v) = yaml.get(&c) {
+                if let Some(v) = yaml.get(c) {
                     resolver_value = ResolverValue::Yaml(v.clone());
                 } else {
                     return None;

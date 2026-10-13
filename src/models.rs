@@ -1,7 +1,7 @@
 use std::mem;
 
 use linked_hash_map::LinkedHashMap;
-use serde_yaml::{Number, Value};
+use crate::yaml::{Number, Value};
 
 use crate::contexts::*;
 use crate::expressions::*;

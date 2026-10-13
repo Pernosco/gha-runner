@@ -62,12 +62,13 @@ use log::{debug, info, warn};
 use octocrab::models::JobId;
 use octocrab::models::RunId;
 use octocrab::{params, Octocrab};
-use serde_yaml::Value;
+use yaml::Value;
 
 mod contexts;
 mod expressions;
 mod local_docker_backend;
 mod models;
+pub mod yaml;
 
 use contexts::*;
 use expressions::ContextResolver;
@@ -930,7 +931,7 @@ impl JobRunner {
         })?;
         let mut buf = Vec::new();
         file.read_to_end(&mut buf).unwrap();
-        Ok(Action(serde_yaml::from_slice(&buf).map_err(|e| {
+        Ok(Action(serde_saphyr::from_slice(&buf).map_err(|e| {
             RunnerErrorKind::InvalidActionYaml {
                 action: action.to_string(),
                 inner: e,
@@ -1018,7 +1019,7 @@ pub enum RunnerErrorKind {
     /// Error parsing workflow YAML file.
     InvalidWorkflowYaml {
         /// The actual parse error.
-        inner: serde_yaml::Error,
+        inner: serde_saphyr::Error,
     },
     /// We expected a certain kind of JSON value but found a different kind.
     TypeMismatch {
@@ -1068,7 +1069,7 @@ pub enum RunnerErrorKind {
         /// The name of the action.
         action: String,
         /// The actual parse error.
-        inner: serde_yaml::Error,
+        inner: serde_saphyr::Error,
     },
     /// The workflow specified an environment variable name that's invalid (e.g. contains `=`).
     InvalidEnvironmentVariableName {
@@ -1255,7 +1256,7 @@ impl Runner {
     /// you want here.
     pub async fn new(ctx: RunnerContext, workflow: &[u8]) -> Result<Runner, RunnerError> {
         let mut workflow = Workflow(
-            serde_yaml::from_slice(workflow)
+            serde_saphyr::from_slice(workflow)
                 .map_err(|e| RunnerErrorKind::InvalidWorkflowYaml { inner: e })?,
         );
         let mut job_descriptions = Vec::new();
