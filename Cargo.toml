@@ -1,6 +1,6 @@
 [package]
 name = "gha-runner"
-version = "0.3.1"
+version = "0.3.2"
 authors = ["Robert O'Callahan <roc@pernos.co>"]
 description = "Run Github Actions workflows locally or on a custom backend"
 documentation = "https://docs.rs/gha-runner"
